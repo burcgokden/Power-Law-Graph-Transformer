@@ -1,0 +1,6 @@
+tensorflow-gpu==2.4.1
+tensorflow-text==2.4.1
+tensorflow-datasets==4.2.0
+numpy==1.19.5
+sacrebleu==1.5.1
+
