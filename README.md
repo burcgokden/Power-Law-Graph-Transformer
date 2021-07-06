@@ -1,10 +1,10 @@
 ## Power Law Graph Transformer
 
-This repository is the implementation of the Power Law Graph Transformer (PLGT) detailed in the research article: [Power Law Graph Transformer for Machine Translation and Representation Learning](https://github.com/burcgokden/Power-Law-Graph-Transformer/blob/main/plgt_paper.pdf)
+This repository is the implementation of the Power Law Graph Transformer (PLGT) detailed in the research article: [Power Law Graph Transformer for Machine Translation and Representation Learning](https://arxiv.org/abs/2107.02039)
 
-Power Law Graph Transformer (PLGT) is a deductive-inductive transformer model that learns the power law relationships at the dataset level for the entire graph while providing predictions for graph instances the same way as a transductive transformer. It provides a new way to generalize and analyze data representations of graph structure of a dataset while keeping the same prediction capabilities of an attention based encoder-decoder model. 
+Power Law Graph Transformer is a deductive-inductive transformer model that learns the power law relationships at the dataset level for the entire graph while providing predictions for graph instances the same way as a transductive transformer. It provides a new way to generalize and analyze data representations of graph structure of a dataset while keeping the same prediction capabilities of an attention based encoder-decoder model. 
 
-PLGT uses a Power Law Graph Attention (PLGA) model to learn the graph representation of the dataset as its deductive output. PLGA learns the metric tensor and energy-curvature tensor for a graph instance usin linear self attention, non-linear power law distribution and deep residual neural networks. It replaces the Scaled Dot Product Attention (SDPA) in widely used transformer implementation. The PLGA is a generalized model developed over the screened Coulomb Attention model first implemented at [CoulGAT: A Graph Attention Framework with screened Coulomb Attention Mechanism](https://github.com/burcgokden/CoulGAT-Graph-Attention-Interpretability). The implementation here uses the training and evaluation framework for SDPA transformer implementation at [Transformer with Scaled Dot Product Attention](https://github.com/burcgokden/SDPA-Transformer-Wrapper) as a starting point.
+PLGT uses a Power Law Graph Attention (PLGA) model to learn the graph representation of the dataset as its deductive output. PLGA learns the metric tensor and energy-curvature tensor for a graph instance using linear self attention, non-linear power law distribution and deep residual neural networks. It replaces the Scaled Dot Product Attention (SDPA) in widely used transformer implementation. The PLGA is a generalized model developed over the screened Coulomb Attention model first implemented at [CoulGAT: A Graph Attention Framework with screened Coulomb Attention Mechanism](https://github.com/burcgokden/CoulGAT-Graph-Attention-Interpretability). The implementation here uses the training and evaluation framework for SDPA transformer implementation at [Transformer with Scaled Dot Product Attention](https://github.com/burcgokden/SDPA-Transformer-Wrapper) as a starting point.
 
 #### Key Features:
 
@@ -19,7 +19,7 @@ PLGT uses a Power Law Graph Attention (PLGA) model to learn the graph representa
 
 #### Sample Run:
 
-Sample run trains and evaluates a single layer 8-head PLGA Transformer model with 8 residual layers using a PT-EN translation task from tensorflow dataset found at: [ted_hrlr_translate/pt_to_en](https://www.tensorflow.org/datasets/catalog/ted_hrlr_translate#ted_hrlr_translatept_to_en)
+Sample run trains and evaluates a single layer 8-head PLGA Transformer model with 8 residual layers for PT-EN translation task from tensorflow dataset found at: [ted_hrlr_translate/pt_to_en](https://www.tensorflow.org/datasets/catalog/ted_hrlr_translate#ted_hrlr_translatept_to_en)
 
 The tokenizer model is developed using BERT Subword Tokenizer for Machine Translation implemented at [BERT Subword Tokenizer for Machine Translation](https://github.com/burcgokden/BERT-Subword-Tokenizer-Wrapper)
 
@@ -93,7 +93,7 @@ train_loss, train_accuracy, val_loss, val_accuracy=e2e_obj.train_model(
 
 ```
 
-- Evaluate the trained SDPA Model using greedy or beam search:
+- Evaluate the trained PLGA Model using greedy or beam search:
 ```python
 import plga_evaluate_bleu_score as ebg
 
@@ -164,10 +164,10 @@ e2e_model.print_translation(sentence, translated_text, ground_truth, eval_max_le
 
 The attention weight output contains the following data:
 
-att_weights: Is a list of [Source LM attention weights, Target LM attention weights, X-LM attention weights]
-att_weights[i][0]: Is a list of [**E<sub>LM</sub>**,** A<sub>LM</sub>**, **P<sub>LM</sub>**, **a<sub>LM</sub>**, **b<sub>a</sub>**, **G<sub>LM</sub>**, **E<sub>LM</sub>**(unmasked)] for i=0,1,2 (SLM, TLM, XLM)
-att_weights[i][0][1][0][0].numpy() : **A<sub>LM</sub>** is an array of [num_head, d<sub>k</sub>, d<sub>k</sub>]
-att_weights[i][0][2][0].numpy() : **P<sub>LM</sub>** is an array of [num_head, d<sub>k</sub>, d<sub>k</sub>]
+- att_weights: Is a list of [Source LM attention weights, Target LM attention weights, X-LM attention weights]
+- att_weights[i][0]: Is a list of [**E<sub>LM</sub>**,** A<sub>LM</sub>**, **P<sub>LM</sub>**, **a<sub>LM</sub>**, **b<sub>a</sub>**, **G<sub>LM</sub>**, **E<sub>LM</sub>**(unmasked)] for i=0,1,2 (SLM, TLM, XLM)
+- att_weights[i][0][1][0][0].numpy() : **A<sub>LM</sub>** is an array of [num_head, d<sub>k</sub>, d<sub>k</sub>]
+- att_weights[i][0][2][0].numpy() : **P<sub>LM</sub>** is an array of [num_head, d<sub>k</sub>, d<sub>k</sub>]
 
 
 
