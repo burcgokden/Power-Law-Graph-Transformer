@@ -165,7 +165,7 @@ e2e_model.print_translation(sentence, translated_text, ground_truth, eval_max_le
 The attention weight output contains the following data:
 
 - att_weights: Is a list of [Source LM attention weights, Target LM attention weights, X-LM attention weights]
-- att_weights[i][0]: Is a list of [**E<sub>LM</sub>**,** A<sub>LM</sub>**, **P<sub>LM</sub>**, **a<sub>LM</sub>**, **b<sub>a</sub>**, **G<sub>LM</sub>**, **E<sub>LM</sub>**(unmasked)] for i=0,1,2 (SLM, TLM, XLM)
+- att_weights[i][0]: Is a list of [**E<sub>LM</sub>**, **A<sub>LM</sub>**, **P<sub>LM</sub>**, **a<sub>LM</sub>**, **b<sub>a</sub>**, **G<sub>LM</sub>**, **E<sub>LM</sub>**(unmasked)] for i=0,1,2 (SLM, TLM, XLM)
 - att_weights[i][0][1][0][0].numpy() : **A<sub>LM</sub>** is an array of [num_head, d<sub>k</sub>, d<sub>k</sub>]
 - att_weights[i][0][2][0].numpy() : **P<sub>LM</sub>** is an array of [num_head, d<sub>k</sub>, d<sub>k</sub>]
 
