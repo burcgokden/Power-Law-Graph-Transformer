@@ -35,11 +35,11 @@ class plga_transformer_e2e:
                          "target_vocab_size" : tokenizer_obj_tgt.get_vocab_size(),
                          "pe_input":1000,
                          "pe_target":1000,
-                         "epochs":80,
-                         "save_model_path": "./default_plga_transformer", #name to save parameters and checkpoints with. This is file name
+                         "epochs":120,
+                         "save_model_path": "default_plga_transformer", #name to save parameters and checkpoints with. This is file name
                          "early_stop_threshold":4.0, #ceiling value for early stop loss. None disables early stop
                          "early_stop_counter": 10, #number of epochs before a checkpoint is saved. None is no limit.
-                         "earl_stop_accuracy": 0.50,  # Accuracy threshold to start saving model
+                         "early_stop_accuracy": 0.50,  # Accuracy threshold to start saving model
                          "warmup_steps": 15000
             }
         print(f"hyperparameters are {self.hpdict}")
@@ -76,22 +76,22 @@ class plga_transformer_e2e:
         )
 
         self.checkpoint_path = checkpoint_path
-        self.train_ckpt_path=os.path.join(self.checkpoint_path, "train", hpdict["save_model_path"])
-        self.val_ckpt_path=os.path.join(self.checkpoint_path, "validate", hpdict["save_model_path"])
-        self.valacc_ckpt_path = os.path.join(self.checkpoint_path, "validate_acc", hpdict["save_model_path"])
+        self.train_ckpt_path=os.path.join(self.checkpoint_path, "train", self.hpdict["save_model_path"])
+        self.val_ckpt_path=os.path.join(self.checkpoint_path, "validate", self.hpdict["save_model_path"])
+        self.valacc_ckpt_path = os.path.join(self.checkpoint_path, "validate_acc", self.hpdict["save_model_path"])
 
         if not os.path.isdir(self.train_ckpt_path):
             print(f"Creating train ckpt dir: {self.train_ckpt_path}")
             os.makedirs(self.train_ckpt_path)
-            cm.pklsave(os.path.join(self.train_ckpt_path, hpdict["save_model_path"] + "_hparams.pkl"), self.hpdict)
+            cm.pklsave(os.path.join(self.train_ckpt_path, self.hpdict["save_model_path"] + "_hparams.pkl"), self.hpdict)
         if not os.path.isdir(self.val_ckpt_path):
             print(f"Creating val ckpt dir: {self.val_ckpt_path}")
             os.makedirs(self.val_ckpt_path)
-            cm.pklsave(os.path.join(self.val_ckpt_path, hpdict["save_model_path"] + "_hparams.pkl"), self.hpdict)
+            cm.pklsave(os.path.join(self.val_ckpt_path, self.hpdict["save_model_path"] + "_hparams.pkl"), self.hpdict)
         if not os.path.isdir(self.valacc_ckpt_path):
             print(f"Creating val accuracy ckpt dir: {self.valacc_ckpt_path}")
             os.makedirs(self.valacc_ckpt_path)
-            cm.pklsave(os.path.join(self.valacc_ckpt_path, hpdict["save_model_path"] + "_hparams.pkl"), self.hpdict)
+            cm.pklsave(os.path.join(self.valacc_ckpt_path, self.hpdict["save_model_path"] + "_hparams.pkl"), self.hpdict)
 
         train_ckpt = tf.train.Checkpoint(transformer=self.transformer, optimizer=self.optimizer)
         val_ckpt = tf.train.Checkpoint(transformer=self.transformer, optimizer=self.optimizer)
@@ -99,15 +99,15 @@ class plga_transformer_e2e:
 
         self.train_ckpt_manager = tf.train.CheckpointManager(train_ckpt,
                                                              directory=self.train_ckpt_path,
-                                                             checkpoint_name="train_"+hpdict["save_model_path"],
+                                                             checkpoint_name="train_"+self.hpdict["save_model_path"],
                                                              max_to_keep=10)
         self.val_ckpt_manager = tf.train.CheckpointManager(val_ckpt,
                                                            directory=self.val_ckpt_path,
-                                                           checkpoint_name="val_"+hpdict["save_model_path"],
+                                                           checkpoint_name="val_"+self.hpdict["save_model_path"],
                                                            max_to_keep=3)
         self.valacc_ckpt_manager = tf.train.CheckpointManager(valacc_ckpt,
                                                            directory=self.valacc_ckpt_path,
-                                                           checkpoint_name="valacc_"+hpdict["save_model_path"],
+                                                           checkpoint_name="valacc_"+self.hpdict["save_model_path"],
                                                            max_to_keep=3)
 
         # if a checkpoint exists, restore the latest checkpoint.
@@ -515,7 +515,7 @@ class plga_transformer_e2e:
     @staticmethod
     def print_translation(sentence, tokens, ground_truth, max_eval_length):
         print(f"Max Eval Length: {max_eval_length}")
-        print(f'{"Input:":15s}: {sentence}')
+        print(f'{"Input":15s}: {sentence}')
         print(f'{"Prediction":15s}: {tokens.numpy().decode("utf-8")}')
         print(f'{"Ground truth":15s}: {ground_truth}')
 

@@ -8,7 +8,7 @@ PLGT uses a Power Law Graph Attention (PLGA) model to learn the graph representa
 
 #### Key Features:
 
-- Capability to generalize graph structure at dataset level through learned power law parameters  of Power Law Graph Attention as deductive task outputs for representation learning.
+- Capability to generalize graph structure at dataset level through learned power law parameters of Power Law Graph Attention as deductive task outputs for representation learning.
 - Capability to predict end-to-end in the same way as a transductive SDPA Transformer model as inductive task output.
 - Flexible model customization through a hyperparameter dictionary for Power Law Graph Transformer model parameters for neural machine translation task.
 - Simple interface for training the model with checkpoints at custom intervals, and highest accuracy observed.
@@ -16,6 +16,7 @@ PLGT uses a Power Law Graph Attention (PLGA) model to learn the graph representa
 - Simple interface for evaluating trained model using BLEU score with greedy search and beam search.
 - Data preparation framework for Neural Machine Translation for tensorflow datasets with capability to use a percentage of the train dataset or filter dataset based on a token  number in a sentence. 
 - Capability to reverse source and target languages for input dataset.
+- Keeps track of train and validation loss/accuracy for each epoch.
 
 #### Sample Run:
 
@@ -169,5 +170,91 @@ The attention weight output contains the following data:
 - att_weights[i][0][1][0][0].numpy() : **A<sub>LM</sub>** is an array of [num_head, d<sub>k</sub>, d<sub>k</sub>]
 - att_weights[i][0][2][0].numpy() : **P<sub>LM</sub>** is an array of [num_head, d<sub>k</sub>, d<sub>k</sub>]
 
+#### Loss and Accuracy Curves:
 
+Train and validation loss/accuracy values for each epoch are saved as pickle file and can be found in the train folder under save_model_path name:
+
+```python
+import common as cm
+
+train_loss=cm.pklload("./model_saves/train/my_plga_transformer/train_loss.pkl")
+val_loss=cm.pklload("./model_saves/train/my_plga_transformer/val_loss.pkl")
+train_acc=cm.pklload("./model_saves/train/my_plga_transformer/train_accuracies.pkl")
+val_acc=cm.pklload("./model_saves/train/my_plga_transformer/val_accuracies.pkl")
+```
+
+#### Single Instance Evaluation:
+
+A sentence can be translated and compared to ground truth using greedy search only or beam search methods for single instance evaluation:
+
+```python
+#greedy search only
+translated_text, translated_tokens, _, eval_length = e2e_model.evaluate(sentence, max_length=50)
+e2e_model.print_translation(sentence, translated_text, ground_truth, eval_length)
+
+#beam search
+translated_text_list, translated_tokens_list, tranlated_tokenid_list, eval_length = e2e_model.beam_evaluate(sentence, beam_size=4, max_length=50)
+e2e_model.print_translation(sentence, translated_text_list[0], ground_truth, eval_length)
+```
+
+- Below sentences from test dataset are evaluated with beam length=4 by a model trained with same hyperparameters as model #2 detailed in the research article. Evaluation output may vary with each newly trained model.
+
+>**Translating from:** perdemos o medo de criar uma coisa nova .  
+>**Best probable translation:** we lost the fear of creating something new .  
+>**Ground Truth:** we lost the fear of creating something new .
+>
+> **Translating from:** vou mostrar aqui alguns exemplos , e vamos examinar alguns deles .  
+> **Best probable translation:** so i ' m going to show you a few examples , and we ' re going to examine some of them .  
+> **Ground Truth:** i 'm going to show you some examples here , and we will run through some of them .  
+>
+> **Translating from:** ok , hoje quero falar sobre a forma como falamos do amor .  
+> **Best probable translation:** okay , today , i want to talk about how we talk about love .  
+> **Ground Truth:** ok , so today i want to talk about how we talk about love .  
+>
+> **Translating from:** mas há uma grande diferença , isso só acontece dentro da colónia .  
+> **Best probable translation:** but there ' s a big difference , that only happens within the colony .  
+> **Ground Truth:** but there 's a big difference , which is that it only happens within the colony .  
+>
+> **Translating from:** mas muito bons a absorver informação de muitas fontes diversas ao mesmo tempo .  
+> **Best probable translation:** but very good at absorbing information from many sources at the same time .  
+> **Ground Truth:** but they 're very good at taking in lots of information from lots of different sources at once .  
+>
+> **Translating from:** não podia construir isto com um anel de aço , da forma que sabia .  
+> **Best probable translation:** i could n ' t build this with a steel ring , the way i knew .  
+> **Ground Truth:** i could n't build this with a steel ring , the way i knew .  
+>
+> **Translating from:** e gostaria de continuar a construir monumentos , que são amados por pessoas .  
+> **Best probable translation:** and i ' d like to continue building monuments , which are loved by people .  
+> **Ground Truth:** and i 'd like to keep building monuments that are beloved by people .  
+>
+> **Translating from:** a questão é que temos que ter um contexto , um limite para as nossas ações em tudo isto .  
+> **Best probable translation:** the question is that we have to have a context , a range for our actions in everything .  
+> **Ground Truth:** the point is that we have to have a context , a gauge for our actions in all this .  
+>
+> **Translating from:** somos mais inteligentes , mais flexivéis , capazes de aprender mais , sobrevivemos em diferentes ambientes , emigrámos para povoar o mundo e viajámos até ao espaço .  
+> **Best probable translation:** we are smarter , more flexible , capable of learning more about , we survive in different environments , where we move people around the world and we traveled to space .  
+> **Ground Truth:** we 're smarter , we 're more flexible , we can learn more , we survive in more different environments , we migrated to cover the world and even go to outer space .  
+>
+> **Translating from:** olhando para trás para os destroços e desespero daqueles anos , parece-me agora como se alguém tivesse morrido naquele lugar , e , no entanto , uma outra pessoa foi salva .  
+> **Best probable translation:** looking behind the rubble and despair from those years , it seems to me now as someone had died in that place , and yet another person was saved .  
+> **Ground Truth:** now looking back on the wreckage and despair of those years , it seems to me now as if someone died in that place , and yet , someone else was saved .  
+>
+> **Translating from:** o cérebro pega em informação sem sentido e faz sentido a partir disso , o que significa que nunca vemos o que lá está , nunca vemos informação , só vemos o que nos foi útil ver no passado .  
+> **Best probable translation:** the brain takes information without sense , and makes sense from it , which means that we never see what ' s there , we never see information , we see what was useful to see in the past .  
+> **Ground Truth:** right ? the brain takes meaningless information and makes meaning out of it , which means we never see what 's there , we never see information , we only ever see what was useful to see in the past .  
+>
+
+#### Citation:
+
+Please cite this work as:
+```bibtex
+@misc{gokden2021power,
+      title={Power Law Graph Transformer for Machine Translation and Representation Learning}, 
+      author={Burc Gokden},
+      year={2021},
+      eprint={2107.02039},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+```
 
